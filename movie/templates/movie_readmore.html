@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>電影 查看更多</title>
+{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="movie-backdrop"
+        style="background-image: url('http://image.tmdb.org/t/p/w500/{{ movie.backdrop_path }}');">
+        <div class="movie-backdrop-overlay"></div>
+        <div class="movie-content">
+            <img class="movie-poster"
+                src="{% if movie.poster_path %}http://image.tmdb.org/t/p/w400/{{ movie.poster_path }}{% else %}https://via.placeholder.com/400x600.png?text=No+Image{% endif %}"
+                alt="{% if movie.poster_path %}{{ movie.original_title }} Poster{% else %}No Image{% endif %}">
+
+            <div class="movie-details">
+
+                <h1>
+                    {% if movie.alternative_title %}
+                    {{ movie.alternative_title }}</h5>
+                    {% else %}
+                    {{ movie.original_title }}
+                    {% endif %}
+                    {% if movie.release_date %}
+                    ( {{ movie.release_date[:4] }} )
+                    {% endif %}
+                </h1>
+                <p>
+                    {% if movie.vote_average %}
+                    ⭐ {{ '{:.2f}'.format(movie.vote_average) }} │
+                    {% endif %}
+
+                    {% if movie.release_date %}
+                    {{ movie.release_date }} │
+                    {% endif %}
+
+                    {% if movie.genres %}
+                    {% for genre in movie.genres %}
+                    {{ genre.name }}
+                    {% if not loop.last %} 、 {% endif %}
+                    {% endfor %}
+                    │
+                    {% endif %}
+
+                    {% if movie.runtime %}
+                    {{ movie.runtime // 60 }} h {{ movie.runtime % 60 }} m
+                    {% endif %}
+                </p>
+                <p style="margin-top: 30px;">劇情介紹：</p>
+                <p>{{ movie.overview }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-center" style="margin-bottom: 20px; margin-top: 10px;">主要演員</h2>
+    <div class="scrollable-container">
+        <div class="row flex-row g-4">
+            {% for key, value in movie.items() %}
+            {% if key == 'casts' and value %}
+            {% for cast in value %}
+            <div class="col-md-3 ">
+                <div class="card">
+                    <!-- 顯示 cast 圖片 -->
+                    {% if cast.profile_path %}
+                    <img src="http://image.tmdb.org/t/p/w200/{{ cast.profile_path }}" class="card-img-top"
+                        style="padding: 5px;">
+                    {% else %}
+                    <div class="placeholder-image" style="width: 200px ; height:auto;">
+                    </div>
+                    {% endif %}
+                    <!-- 顯示 cast info -->
+                    <div class="card-body" style="height: 200px; max-width: 200px;">
+                        <h5 class="card-readmore-text" style="height: 2.6em; line-height: 1.3em">{{ cast.name }}</h5>
+                        {% if cast.character %}
+                        <p class="card-readmore-text" style="color: darkgray; margin-top: 10px">飾演：{{ cast.character }}</p>
+                        {% else %}
+                        <br>
+                        {% endif %}
+                        <a href="#" class="btn btn-secondary " castId="{{ cast.id }}">查看更多</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

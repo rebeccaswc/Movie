@@ -1,0 +1,127 @@
+{% extends 'base.html' %} {% block head %}
+<title>電影查詢</title>
+{% endblock %} {% block body %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- <script>
+    var redirectUrl = "{{ url_for('movies.search_movies', searchTerm='') | tojson | safe }}";
+</script> -->
+
+<head>
+    <link href="{{ url_for('static', filename='css/discover.css') }}" rel="stylesheet">
+</head>
+
+
+<div class="container selection-container">
+    <form method="post">
+        <label for="region-select">地區：</label>
+        <select id="region-select" name="region" value="{{ selected_region }}" style="margin-right: 10px;">
+            <option value="">所有地區</option>
+            {% for region in region_options %}
+            <option value="{{ region.value }}" {% if selected_region==region.value %}selected{% endif %}>{{ region.name
+                }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="category-select">類別：</label>
+        <select id="category-select" name="genres" style="margin-right: 10px;">
+            <option value="">所有類別</option>
+            <option value="12" {% if selected_genres=='12' %}selected{% endif %}>冒險</option>
+            <option value="18" {% if selected_genres=='18' %}selected{% endif %}>劇情</option>
+            <option value="28" {% if selected_genres=='28' %}selected{% endif %}>動作</option>
+            <option value="16" {% if selected_genres=='16' %}selected{% endif %}>動畫</option>
+            <option value="36" {% if selected_genres=='36' %}selected{% endif %}>歷史</option>
+            <option value="35" {% if selected_genres=='35' %}selected{% endif %}>喜劇</option>
+            <option value="14" {% if selected_genres=='14' %}selected{% endif %}>奇幻</option>
+            <option value="10751" {% if selected_genres=='10751' %}selected{% endif %}>家庭</option>
+            <option value="27" {% if selected_genres=='27' %}selected{% endif %}>恐怖</option>
+            <option value="9648" {% if selected_genres=='9648' %}selected{% endif %}>懸疑</option>
+            <option value="53" {% if selected_genres=='53' %}selected{% endif %}>驚悚</option>
+            <option value="10752" {% if selected_genres=='10752' %}selected{% endif %}>戰爭</option>
+            <option value="10749" {% if selected_genres=='10749' %}selected{% endif %}>愛情</option>
+            <option value="80" {% if selected_genres=='80' %}selected{% endif %}>犯罪</option>
+            <option value="10770" {% if selected_genres=='10770' %}selected{% endif %}>電視電影</option>
+            <option value="878" {% if selected_genre=='878' %}selected{% endif %}>科幻</option>
+            <option value="99" {% if selected_genre=='99' %}selected{% endif %}>紀錄</option>
+            <option value="37" {% if selected_genre=='37' %}selected{% endif %}>西部</option>
+            <option value="10402" {% if selected_genre=='10402' %}selected{% endif %}>音樂</option>
+        </select>
+
+
+        <label for="year-select">年份：</label>
+        <select id="year-select" name="years" style="margin-right: 10px;">
+            <option value="">所有年份</option>
+            {% for year in year_options %}
+            <option value="{{ year }}" {% if selected_year==year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="condition">選擇排序依據：</label>
+        <select name="condition" id="condition" style="margin-right: 10px;">
+            <option value="none" {% if selected_condition=='none' %}selected{% endif %}>None</option>
+            <option value="release_date.desc" {% if selected_condition=='release_date.desc' %}selected{% endif %}>上映日期 ⬇
+            </option>
+            <option value="release_date.asc" {% if selected_condition=='release_date.asc' %}selected{% endif %}>上映日期 ⬆
+            </option>
+            <option value="popularity.desc" {% if selected_condition=='popularity.desc' %}selected{% endif %}>人氣 ⬇
+            </option>
+            <option value="popularity.asc" {% if selected_condition=='popularity.asc' %}selected{% endif %}>人氣 ⬆
+            </option>
+            <option value="vote_average.desc" {% if selected_condition=='vote_average.desc' %}selected{% endif %}>投票平均 ⬇
+            </option>
+            <option value="vote_average.asc" {% if selected_condition=='vote_average.asc' %}selected{% endif %}>投票平均 ⬆
+            </option>
+        </select>
+
+        <label for="number">選擇搜尋筆數：</label>
+        <select name="number" id="number" style="margin-right: 10px;">
+            <option value="20" {% if selected_number==20 %}selected{% endif %}>20</option>
+            <option value="100" {% if selected_number==100 %}selected{% endif %}>100</option>
+            <option value="500" {% if selected_number==500 %}selected{% endif %}>500</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary" style="margin-left: 10px;">Search</button>
+    </form>
+</div>
+
+
+<!-- Bootstrap’s cards -->
+
+<div class="row row-cols-1 row-cols-md-5 g-4">
+    {% for movie in data %}
+    <div class="col">
+        <div class="card h-100">
+            {% if movie.poster_path %}
+            <img src="http://image.tmdb.org/t/p/w200/{{ movie.poster_path }}" class="card-img-top" style="padding: 5px;"
+                alt="{{ movie.original_title }}">
+            {% else %}
+            <div class="placeholder-image"> </div>
+            {% endif %}
+            <div class="card-body">
+                {% if movie.alternative_title %}
+                <h5 class="card-title"
+                    style="white-space: normal; word-wrap: break-word; max-width: 100%;height: 2.6em; line-height: 1.3em; margin-left: 2 px; margin-right: 10px; margin-top: 10px;">
+                    {{ movie.alternative_title }}</h5>
+                {% else %}
+                <h5 class="card-title"
+                    style="white-space: normal; word-wrap: break-word; max-width: 100%;height: 2.6em; line-height: 1.3em; margin-left: 2 px; margin-right: 10px; margin-top: 10px;">
+                    {{ movie.original_title }}</h5>
+                {% endif %}
+                <p class="card-text mb-1" style="margin-top: 10px">人氣： {{ movie.popularity |round(1)}}</p>
+                <p class="card-text mb-1">投票分數： {{ movie.vote_average |round(1) }}</p>
+                <p class="card-text mb-1">上映日期：
+                    {% if movie.release_date %}
+                    {{ movie.release_date }}
+                    {% else %}
+                    不詳
+                    {% endif %}
+                </p>
+                <a href="#" class="btn btn-primary btn-readmore" data-movie-id="{{ movie.id }}">查看更多</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

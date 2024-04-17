@@ -1,0 +1,74 @@
+{% extends 'base.html' %} {% block head %}
+<title>電影列表</title>
+{% endblock %} {% block body %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<body>
+    {% for condition in condition_chinese %} {% if condition == '現正熱映' %}
+    <div class="banner">
+        <div class="banner-wrap">
+            {% for movie in data[loop.index0] %}
+            <img src="http://image.tmdb.org/t/p/w400/{{ movie.poster_path }}" class="card-img-top"
+                alt="{{ movie.original_title }}" style="padding: 5px;"> {% endfor %}
+            <span></span>
+        </div>
+    </div>
+    {% endif %} {% endfor %} {% for condition in condition_chinese %}
+    <h2 class="text-center" style="margin-bottom: 20px;margin-top: 10px;">{{ condition }}</h2>
+    <div class="scrollable-container">
+        <div class="row flex-row g-4">
+            {% for movie in data[loop.index0] %}
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="http://image.tmdb.org/t/p/w200/{{ movie.poster_path }}" class="card-img-top"
+                        alt="{{ movie.original_title }}" style="padding: 5px;">
+                    <div class="card-body-index">
+                        <h5 class="card-title"
+                            style="white-space: normal; word-wrap: break-word; max-width: 100%;height: 2.6em; line-height: 1.3em; margin-left: 10px; margin-right: 10px; margin-top: 10px;">
+                            {{ movie.original_title }}</h5>
+                        <p class="card-text" style="margin-top: 10px">人氣： {{ movie.popularity }}</p>
+                        <p class="card-text">投票分數： {{ movie.vote_average }}</p>
+                        <p class="card-text">上映日期： {{ movie.release_date }}</p>
+                        <a href="#" class="btn btn-primary btn-readmore" data-movie-id="{{ movie.id }}">查看更多</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            // 調整較小海報大小
+            document.addEventListener('DOMContentLoaded', function () {
+                const targetWidth = 200; // 目標寬度
+                const targetHeight = targetWidth * 1.5; // 目標高度設為寬度的1.5倍
+
+                const images = document.querySelectorAll('.card img.card-img-top');
+
+                images.forEach(function (image) {
+                    // 確保圖片加載完成
+                    if (image.complete) {
+                        resizeImage(image);
+                    } else {
+                        image.addEventListener('load', function () {
+                            resizeImage(image);
+                        });
+                    }
+                });
+
+                function resizeImage(image) {
+                    if (image.naturalWidth < targetWidth || image.naturalHeight < targetHeight) {
+                        image.style.width = targetWidth + 'px';
+                        image.style.height = targetHeight + 'px';
+                        image.style.objectFit = 'cover'; // 防止圖片失真
+                    }
+                }
+            });
+        </script>
+    </div>
+    {% endfor %}
+
+</body>
+
+
+{% endblock %}
